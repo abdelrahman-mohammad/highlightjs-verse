@@ -1,0 +1,53 @@
+{
+    "name": "highlightjs-verse",
+    "version": "1.0.0",
+    "description": "Verse (Epic Games UEFN) language grammar and theme for highlight.js",
+    "main": "src/languages/verse.js",
+    "module": "dist/verse.es.min.js",
+    "exports": {
+        ".": {
+            "import": "./dist/verse.es.min.js",
+            "require": "./src/languages/verse.js",
+            "default": "./src/languages/verse.js"
+        },
+        "./styles/*": "./styles/*"
+    },
+    "files": [
+        "src/",
+        "dist/",
+        "styles/"
+    ],
+    "scripts": {
+        "build": "node build.mjs",
+        "test": "jest",
+        "prepublishOnly": "npm run build"
+    },
+    "peerDependencies": {
+        "highlight.js": ">=11.0.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.0",
+        "highlight.js": "^11.11.1",
+        "jest": "^30.3.0"
+    },
+    "keywords": [
+        "verse",
+        "uefn",
+        "epic-games",
+        "fortnite",
+        "highlight.js",
+        "highlightjs",
+        "syntax",
+        "syntax-highlighting"
+    ],
+    "author": "Abdelrahman Abdelaal",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/abdelrahman-mohammad/highlightjs-verse.git"
+    },
+    "bugs": {
+        "url": "https://github.com/abdelrahman-mohammad/highlightjs-verse/issues"
+    },
+    "homepage": "https://github.com/abdelrahman-mohammad/highlightjs-verse#readme"
+}

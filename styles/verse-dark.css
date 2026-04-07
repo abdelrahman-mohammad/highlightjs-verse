@@ -1,0 +1,111 @@
+/**
+ * Verse Dark theme for highlight.js
+ *
+ * Colors sourced from Epic Games' verse-dark.tmTheme.json
+ * (VS Code Verse extension). Background is transparent so
+ * the dashboard's existing code-block styles remain in control.
+ */
+
+/* Base — light blue (variable/identifier) as default text color.
+   Official theme: editor.foreground is #D4D4D4, but identifiers
+   (variable.verse) are #b9d6ff. Since most code text IS identifiers,
+   using the identifier color as default gives the closest match. */
+.hljs {
+    color: #b9d6ff;
+    background: transparent;
+}
+
+/* Comments — green (official theme: no italic) */
+.hljs-comment {
+    color: #77B06B;
+}
+
+/* Strings — tan */
+.hljs-string {
+    color: #C09077;
+}
+
+/* Escape characters — gold */
+.hljs-char\.escape {
+    color: #B89047;
+}
+
+/* String interpolation — gold */
+.hljs-subst {
+    color: #B89047;
+}
+
+/* Numbers — light green */
+.hljs-number {
+    color: #c2ddb4;
+}
+
+/* Keywords (control flow) — blue */
+.hljs-keyword {
+    color: #569cd6;
+}
+
+/* Built-in / block keywords — slate blue */
+.hljs-built_in {
+    color: #8499b7;
+}
+
+/* Declaration keywords (var, set, ref, etc.) — slate blue */
+.hljs-type {
+    color: #8499b7;
+}
+
+/* Operators — teal */
+.hljs-operator {
+    color: #77AFAF;
+}
+
+/* Defined names / functions — light purple */
+.hljs-title,
+.hljs-title\.function {
+    color: #e5c2ff;
+}
+
+/* Paths (/Package/Module) — blue */
+.hljs-link {
+    color: #569cd6;
+    text-decoration: none;
+}
+
+/* Literals (true/false) — blue */
+.hljs-literal {
+    color: #569cd6;
+}
+
+/* Punctuation (: ; ,) — slate blue */
+.hljs-punctuation {
+    color: #8499b7;
+}
+
+/* Variables / referenced identifiers — light blue */
+.hljs-variable {
+    color: #b9d6ff;
+}
+
+/* Tags (markup) — muted purple */
+.hljs-tag {
+    color: #6F77A6;
+}
+
+.hljs-name {
+    color: #8499b7;
+}
+
+/* Section headers in output (relevance metadata) */
+.hljs-section {
+    color: #e5c2ff;
+}
+
+/* Emphasis within comments */
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: bold;
+}
