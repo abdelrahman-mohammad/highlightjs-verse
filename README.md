@@ -1,5 +1,9 @@
 # highlightjs-verse
 
+[![npm version](https://img.shields.io/npm/v/highlightjs-verse.svg)](https://www.npmjs.com/package/highlightjs-verse)
+[![CI](https://github.com/abdelrahman-mohammad/highlightjs-verse/actions/workflows/ci.yml/badge.svg)](https://github.com/abdelrahman-mohammad/highlightjs-verse/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [Verse](https://dev.epicgames.com/documentation/en-us/uefn/verse-language-reference) language grammar and theme for [highlight.js](https://highlightjs.org/).
 
 Verse is the programming language for [Unreal Editor for Fortnite (UEFN)](https://dev.epicgames.com/documentation/en-us/uefn/unreal-editor-for-fortnite-documentation) by Epic Games. This package adds Verse syntax highlighting support to highlight.js with colors matching Epic's official VS Code extension.
