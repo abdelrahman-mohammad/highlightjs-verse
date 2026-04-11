@@ -131,8 +131,17 @@ function hljsDefineVerse(hljs) {
     // --- Class/struct/interface/enum specifiers ---------------------------
     // Not separate keywords in the official grammar (just identifiers),
     // but highlighting these as keywords improves readability.
+    // Grouped by kind:
+    //   Declaration kinds: class struct interface enum module trait
+    //   Class modifiers:   unique abstract concrete final final_super castable persistable
+    //   Access modifiers:  internal public private protected scoped epic_internal
+    //   Inheritance:       override
+    //   Effect specifiers: transacts varies computes converges decides no_rollback
+    //                      suspends reads writes allocates
+    //   Function attrs:    localizes
+    //   Interop:           native native_callable
     var TYPE_SPECIFIER = {
-        match: /\b(class|struct|interface|enum|module|trait|unique|abstract|concrete|final|internal|public|private|protected|override|transacts|varies|computes|converges|decides|no_rollback|suspends|native|epic_internal)\b/,
+        match: /\b(class|struct|interface|enum|module|trait|unique|abstract|concrete|final_super|final|castable|persistable|internal|public|private|protected|scoped|epic_internal|override|transacts|varies|computes|converges|decides|no_rollback|suspends|reads|writes|allocates|localizes|native_callable|native)\b/,
         scope: 'keyword',
         relevance: 5
     };

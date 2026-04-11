@@ -126,6 +126,50 @@ describe('highlightjs-verse', () => {
             expectToken('transacts', 'keyword', 'transacts');
             expectToken('decides', 'keyword', 'decides');
         });
+
+        test('memory effect specifiers (reads/writes/allocates)', () => {
+            expectToken('reads', 'keyword', 'reads');
+            expectToken('writes', 'keyword', 'writes');
+            expectToken('allocates', 'keyword', 'allocates');
+        });
+
+        test('class modifiers (castable/final_super/persistable)', () => {
+            expectToken('castable', 'keyword', 'castable');
+            expectToken('final_super', 'keyword', 'final_super');
+            expectToken('persistable', 'keyword', 'persistable');
+        });
+
+        test('access modifier scoped', () => {
+            expectToken('scoped', 'keyword', 'scoped');
+        });
+
+        test('function attribute localizes', () => {
+            expectToken('localizes', 'keyword', 'localizes');
+        });
+
+        test('native_callable specifier', () => {
+            expectToken('native_callable', 'keyword', 'native_callable');
+        });
+
+        test('final_super does not collide with final', () => {
+            // Regression: longer alternatives must win over shorter prefixes
+            const html = highlight('final_super');
+            expect(html).toContain('<span class="hljs-keyword">final_super</span>');
+            expect(html).not.toContain('<span class="hljs-keyword">final</span>_super');
+        });
+
+        test('native_callable does not collide with native', () => {
+            const html = highlight('native_callable');
+            expect(html).toContain('<span class="hljs-keyword">native_callable</span>');
+            expect(html).not.toContain('<span class="hljs-keyword">native</span>_callable');
+        });
+
+        test('unique class with allocates effect (UEFN 31.00+)', () => {
+            const html = highlight('MyData := class<unique><allocates>:');
+            expect(html).toContain('<span class="hljs-keyword">class</span>');
+            expect(html).toContain('<span class="hljs-keyword">unique</span>');
+            expect(html).toContain('<span class="hljs-keyword">allocates</span>');
+        });
     });
 
     describe('operators', () => {
