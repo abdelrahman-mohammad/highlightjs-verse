@@ -14,6 +14,8 @@ Verse is the programming language for [Unreal Editor for Fortnite (UEFN)](https:
 npm install highlightjs-verse highlight.js
 ```
 
+TypeScript type definitions ship with the package as of 1.2.0 (no `@types/highlightjs-verse` or local shim needed).
+
 ## Usage
 
 ### ES Modules (React, Vue, Vite, webpack)
