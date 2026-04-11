@@ -1,11 +1,13 @@
 {
     "name": "highlightjs-verse",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Verse (Epic Games UEFN) language grammar and theme for highlight.js",
     "main": "src/languages/verse.js",
     "module": "dist/verse.es.min.js",
+    "types": "src/languages/verse.d.ts",
     "exports": {
         ".": {
+            "types": "./src/languages/verse.d.ts",
             "import": "./dist/verse.es.min.js",
             "require": "./src/languages/verse.js",
             "default": "./src/languages/verse.js"
