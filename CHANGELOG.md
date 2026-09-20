@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-20
+
 ### Added
 
 - Block macros `if for loop block case defer spawn race sync rush branch let batch first assert` are highlighted as block keywords (slate blue, with `then`, `else` and `do`). `if (X > 1):` and `for (Y := 0..3):` no longer render `if` and `for` as function names. ([#11])
@@ -46,7 +48,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - 33 tests covering all token types
 - GitHub Actions CI (Node 18/20/22) and automated npm release workflow
 
-[Unreleased]: https://github.com/abdelrahman-mohammad/highlightjs-verse/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/abdelrahman-mohammad/highlightjs-verse/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/abdelrahman-mohammad/highlightjs-verse/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/abdelrahman-mohammad/highlightjs-verse/compare/v1.2.0...v1.2.1
 
 [#10]: https://github.com/abdelrahman-mohammad/highlightjs-verse/issues/10
