@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Added
 
-- Block macros `if for loop block case defer spawn race sync rush branch let batch first` are highlighted as block keywords (slate blue, with `then`, `else` and `do`). `if (X > 1):` and `for (Y := 0..3):` no longer render `if` and `for` as function names. ([#11])
+- Block macros `if for loop block case defer spawn race sync rush branch let batch first assert` are highlighted as block keywords (slate blue, with `then`, `else` and `do`). `if (X > 1):` and `for (Y := 0..3):` no longer render `if` and `for` as function names. ([#11])
 - Built-in types `int float string void char logic any comparable tuple rational array map option` are highlighted as types. ([#11])
 - Seven specifiers from Epic's shipped digests: `constructor`, `predicts`, `open`, `final_super_base`, `persistent`, `module_scoped_var_weak_map_key`, `uht_comparable`. ([#11])
 

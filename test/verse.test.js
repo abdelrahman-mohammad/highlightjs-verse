@@ -189,7 +189,7 @@ describe('highlightjs-verse', () => {
     // Words the compiler reserves. Epic's grammar scopes none of them; this
     // package does, for readability, the way it already does for specifiers.
     describe('reserved words and built-in types', () => {
-        const BLOCK_MACROS = ['if', 'for', 'loop', 'block', 'case', 'defer', 'spawn', 'race', 'sync', 'rush', 'branch', 'let', 'batch', 'first'];
+        const BLOCK_MACROS = ['if', 'for', 'loop', 'block', 'case', 'defer', 'spawn', 'race', 'sync', 'rush', 'branch', 'let', 'batch', 'first', 'assert'];
         const BUILTIN_TYPES = ['int', 'float', 'string', 'void', 'char', 'logic', 'any', 'comparable', 'tuple', 'rational', 'array', 'map', 'option'];
 
         test.each(BLOCK_MACROS)('block macro %s is built_in', (word) => {
@@ -236,6 +236,22 @@ describe('highlightjs-verse', () => {
             const html = highlight('if (X)');
             expect(html).not.toContain('function_">f<');
             expect(html).toContain('<span class="hljs-built_in">if</span> (X)');
+        });
+
+        test.each(['format(2)', 'intern := 3', 'letter()', 'forest : int = 4'])('an identifier that starts with a keyword is still an identifier: %s', (code) => {
+            const name = code.match(/^\w+/)[0];
+            expect(highlight(code)).toContain(`<span class="hljs-title function_">${name}</span>`);
+        });
+
+        test('the identifier guard covers every keyword bucket and carries no relevance suffix', () => {
+            const lang = verse({});
+            const guard = lang.contains.find(rule => rule.scope === 'title.function').match;
+            const guarded = guard.match(/\(\?:([^)]*)\)/)[1].split('|');
+            const keywords = Object.keys(lang.keywords)
+                .flatMap(bucket => lang.keywords[bucket].split(' '))
+                .map(entry => entry.split('|')[0]);
+            expect(new Set(guarded)).toEqual(new Set(keywords));
+            expect(guarded).not.toContain('0');
         });
 
         test('words the compiler has only reserved for the future stay plain', () => {

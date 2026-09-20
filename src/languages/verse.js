@@ -27,13 +27,17 @@ function hljsDefineVerse(hljs) {
     //   type     -> keyword.declaration.verse (#8499b7 slate blue)
     //   literal  -> constant.language (#569cd6 blue)
     //
-    // Epic's grammar scopes only the first word of each line below. The rest
-    // are words the compiler reserves (ReservedSymbols.inl), added here for
-    // readability the way the specifiers are. Only words reserved at a
-    // shipped version belong: profile, await, upon and dictate are still
-    // legal identifiers and must stay out.
-    var BLOCK_MACROS = 'if for loop block case defer spawn race sync rush branch let batch first';
-    var BUILTIN_TYPES = 'int float string void char logic any comparable tuple rational array map option';
+    // Epic's grammar scopes the literal words in KEYWORDS below and nothing
+    // in BLOCK_MACROS or BUILTIN_TYPES. Those are words the compiler reserves
+    // (ReservedSymbols.inl), added for readability the way the specifiers
+    // are. Only words reserved at a shipped version belong: profile, await,
+    // upon and dictate are still legal identifiers and must stay out.
+    //
+    // `|0` zeroes a word's auto-detection relevance. Every word that is a
+    // keyword, builtin or everyday name in other languages carries it, or a
+    // plain C or JS snippet fed to highlightAuto scores as Verse.
+    var BLOCK_MACROS = 'if for loop|0 block|0 case|0 defer|0 spawn|0 race|0 sync|0 rush branch let|0 batch|0 first|0 assert|0';
+    var BUILTIN_TYPES = 'int|0 float|0 string|0 void|0 char|0 logic any|0 comparable tuple|0 rational array|0 map|0 option';
     var KEYWORDS = {
         keyword: 'return yield break continue',
         built_in: 'with do until catch then else of at over when where while next ' + BLOCK_MACROS,
@@ -47,7 +51,12 @@ function hljsDefineVerse(hljs) {
     // rejects `if` at its first letter, the engine retries one character on
     // and `f (` would match.
     var NOT_KEYWORD = '\\b(?!(?:' +
-        [KEYWORDS.keyword, KEYWORDS.built_in, KEYWORDS.type, KEYWORDS.literal].join(' ').split(' ').join('|') +
+        Object.keys(KEYWORDS)
+            .map(function (bucket) { return KEYWORDS[bucket]; })
+            .join(' ')
+            .split(' ')
+            .map(function (word) { return word.split('|')[0]; })
+            .join('|') +
         ')\\b)';
     var IDENT = "[A-Za-z_]\\w*(?:'[^']*')?";
 
@@ -194,7 +203,6 @@ function hljsDefineVerse(hljs) {
     // --- Class/struct/interface/enum specifiers ---------------------------
     // Not separate keywords in the official grammar (just identifiers),
     // but highlighting these as keywords improves readability.
-    // Longer words go before their prefixes in the alternation.
     // Grouped by kind:
     //   Declaration kinds: class struct interface enum module trait
     //   Class modifiers:   unique abstract concrete final final_super final_super_base
