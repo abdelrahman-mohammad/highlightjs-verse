@@ -34,12 +34,13 @@ function hljsDefineVerse(hljs) {
     };
 
     // --- Block comment: <# ... #> (nestable) -----------------------------
-    // The (?!>) guard keeps <#> out: it is a different token, and this rule
-    // is reachable from line comments and strings where a marker is not.
+    // Both guards keep <#> out, as in Epic's grammar. It is a different
+    // token: on begin, this rule is reachable from comment bodies where a
+    // marker is not; on end, the #> half of a <#> must not close the block.
     var BLOCK_COMMENT = {
         scope: 'comment',
         begin: /<#(?!>)/,
-        end: '#>',
+        end: /(?<!<)#>/,
         contains: ['self'],
         relevance: 10
     };
@@ -72,8 +73,9 @@ function hljsDefineVerse(hljs) {
         'on:end': function (match, response) {
             var text = match.input;
             var i = match.index + match[0].length;
-            // Skip blank lines to the next line with content; none left
-            // means the body runs to the end of the input.
+            // Skip blank lines to the next line with content. Only
+            // whitespace left means the end stands here; trailing blank
+            // lines render the same either side of the span.
             for (;;) {
                 var lineEnd = text.indexOf('\n', i);
                 if (lineEnd === -1) lineEnd = text.length;

@@ -102,6 +102,18 @@ describe('highlightjs-verse', () => {
             expect(html).toContain('<span class="hljs-title function_">Code</span>');
         });
 
+        test('is plain text inside a block comment', () => {
+            const html = highlight('<# a <#> b #> Code()\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;# a &lt;#&gt; b #&gt;</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('does not end a block comment that comments out a marker and its body', () => {
+            const html = highlight('<#\n<#> old note\n    more\nOld():void = 1\n#>\nLive():void = 2\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#\n&lt;#&gt; old note\n    more\nOld():void = 1\n#&gt;</span>');
+            expect(html).toContain('<span class="hljs-title function_">Live</span>');
+        });
+
         test('a <# opened in the body runs past a dedent to its #>', () => {
             const html = highlight('<#> marker\n    <# block\nCode()\n#>\nAfter()\n');
             expect(html).toContain('<span class="hljs-comment">&lt;# block\nCode()\n#&gt;</span></span>');
