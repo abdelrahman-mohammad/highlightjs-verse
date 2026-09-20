@@ -34,12 +34,55 @@ function hljsDefineVerse(hljs) {
     };
 
     // --- Block comment: <# ... #> (nestable) -----------------------------
+    // The (?!>) guard keeps <#> out: it is a different token, and this rule
+    // is reachable from line comments and strings where a marker is not.
     var BLOCK_COMMENT = {
         scope: 'comment',
-        begin: '<#',
+        begin: /<#(?!>)/,
         end: '#>',
         contains: ['self'],
         relevance: 10
+    };
+
+    // Leading-space count from an offset. A raw count agrees with the
+    // compiler on every file it accepts, because it rejects mixed
+    // tab/space indentation outright.
+    function indentOf(text, from) {
+        var i = from;
+        while (text[i] === ' ' || text[i] === '\t') i++;
+        return i - from;
+    }
+
+    // --- Indented comment marker: <#> ------------------------------------
+    // Comments the rest of its line and every following line indented past
+    // the marker's line, blank lines included. The end must consume the
+    // newline: an ignored zero-width end never advances the cursor and
+    // highlight.js spins until its iteration guard throws.
+    var INDENTED_COMMENT = {
+        scope: 'comment',
+        begin: /<#>/,
+        end: /\r?\n/,
+        excludeEnd: true,
+        contains: [BLOCK_COMMENT],
+        relevance: 10,
+        'on:begin': function (match, response) {
+            var lineStart = match.input.lastIndexOf('\n', match.index - 1) + 1;
+            response.data.indent = indentOf(match.input, lineStart);
+        },
+        'on:end': function (match, response) {
+            var text = match.input;
+            var i = match.index + match[0].length;
+            // Skip blank lines to the next line with content; none left
+            // means the body runs to the end of the input.
+            for (;;) {
+                var lineEnd = text.indexOf('\n', i);
+                if (lineEnd === -1) lineEnd = text.length;
+                if (text.slice(i, lineEnd).trim() !== '') break;
+                if (lineEnd === text.length) return;
+                i = lineEnd + 1;
+            }
+            if (indentOf(text, i) > response.data.indent) response.ignoreMatch();
+        }
     };
 
     // --- Line comment: # to EOL (not part of <# or #>) ------------------
@@ -181,6 +224,7 @@ function hljsDefineVerse(hljs) {
 
     // Fill interpolation contents (recursive references)
     INTERPOLATION.contains = [
+        INDENTED_COMMENT,
         BLOCK_COMMENT,
         LINE_COMMENT,
         STRING,
@@ -201,6 +245,7 @@ function hljsDefineVerse(hljs) {
         case_insensitive: false,
         keywords: KEYWORDS,
         contains: [
+            INDENTED_COMMENT,
             BLOCK_COMMENT,
             LINE_COMMENT,
             STRING,
