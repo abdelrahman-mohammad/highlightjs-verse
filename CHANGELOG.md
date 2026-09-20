@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
-- `<#>` no longer opens a block comment that runs to the end of the file. It is Verse's indented comment marker: the rest of its line and every line indented past it are comment, and the first dedented line is code again. ([#10])
+- `<#>` no longer opens a block comment that runs to the end of the file. It is Verse's indented comment marker: the rest of its line and every line indented past it are comment, and the first dedented line is code again. A `<#>` written inside a `<# ... #>` block no longer ends that block either. ([#10])
 
 ## [1.2.0] - 2026-04-11
 
