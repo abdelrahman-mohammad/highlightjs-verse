@@ -32,9 +32,9 @@ describe('highlightjs-verse', () => {
             expect(lang.case_insensitive).toBe(false);
         });
 
-        test('contains 13 rules', () => {
+        test('contains 14 rules', () => {
             const lang = verse({});
-            expect(lang.contains).toHaveLength(13);
+            expect(lang.contains).toHaveLength(14);
         });
     });
 
@@ -46,6 +46,84 @@ describe('highlightjs-verse', () => {
         test('block comment', () => {
             const html = highlight('<# block #>');
             expect(html).toContain('hljs-comment');
+        });
+
+        test('nested block comment ends at the outer #>', () => {
+            const html = highlight('<# a <# b #> c #> Code()');
+            expect(html).toContain('&lt;# b #&gt;</span> c #&gt;</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('<# inside a line comment opens a block that runs to #> on a later line', () => {
+            const html = highlight('# note <# x\ny\n#>\nCode()');
+            expect(html).toContain('x\ny\n#&gt;</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+    });
+
+    // <#> comments the rest of its line and every line indented past it.
+    // Each case asserts both halves: what is comment, and what is code again.
+    describe('indented comment marker <#>', () => {
+        test('does not swallow the next unindented line', () => {
+            const html = highlight('<#> Indented comment\nMyFunction():void =\n    Print("this is code")\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#&gt; Indented comment</span>');
+            expect(html).toContain('<span class="hljs-title function_">MyFunction</span>');
+            expect(html).toContain('<span class="hljs-string">&quot;this is code&quot;</span>');
+        });
+
+        test('comments the indented body and stops at the first dedent', () => {
+            const html = highlight('<#> marker\n    body one\n    body two\nCode()\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#&gt; marker\n    body one\n    body two</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('a blank line inside the body does not end it', () => {
+            const html = highlight('<#> marker\n    body\n\n    more body\nCode()\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#&gt; marker\n    body\n\n    more body</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('measures the body against the indent of the marker line', () => {
+            const html = highlight('    <#> marker\n        body\n    Sibling()\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#&gt; marker\n        body</span>');
+            expect(html).toContain('<span class="hljs-title function_">Sibling</span>');
+        });
+
+        test('a marker mid-line comments only from the marker on', () => {
+            const html = highlight('using { /A } <#> why\n    because\nCode()\n');
+            expect(html).toContain('<span class="hljs-keyword">using</span>');
+            expect(html).toContain('<span class="hljs-comment">&lt;#&gt; why\n    because</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('is plain text inside a line comment', () => {
+            const html = highlight('# note <#> here\nCode()\n');
+            expect(html).toContain('<span class="hljs-comment"># note &lt;#&gt; here</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('is plain text inside a block comment', () => {
+            const html = highlight('<# a <#> b #> Code()\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;# a &lt;#&gt; b #&gt;</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
+        });
+
+        test('does not end a block comment that comments out a marker and its body', () => {
+            const html = highlight('<#\n<#> old note\n    more\nOld():void = 1\n#>\nLive():void = 2\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#\n&lt;#&gt; old note\n    more\nOld():void = 1\n#&gt;</span>');
+            expect(html).toContain('<span class="hljs-title function_">Live</span>');
+        });
+
+        test('a <# opened in the body runs past a dedent to its #>', () => {
+            const html = highlight('<#> marker\n    <# block\nCode()\n#>\nAfter()\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;# block\nCode()\n#&gt;</span></span>');
+            expect(html).toContain('<span class="hljs-title function_">After</span>');
+        });
+
+        test('handles CRLF line endings', () => {
+            const html = highlight('<#> marker\r\n    body\r\nCode()\r\n');
+            expect(html).toContain('<span class="hljs-comment">&lt;#&gt; marker\r\n    body</span>');
+            expect(html).toContain('<span class="hljs-title function_">Code</span>');
         });
     });
 

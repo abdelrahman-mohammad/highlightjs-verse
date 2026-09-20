@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- `<#>` no longer opens a block comment that runs to the end of the file. It is Verse's indented comment marker: the rest of its line and every line indented past it are comment, and the first dedented line is code again. A `<#>` written inside a `<# ... #>` block no longer ends that block either. ([#10])
+
 ## [1.2.0] - 2026-04-11
 
 ### Added
@@ -31,3 +37,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - CJS, ESM, and IIFE (browser) builds
 - 33 tests covering all token types
 - GitHub Actions CI (Node 18/20/22) and automated npm release workflow
+
+[#10]: https://github.com/abdelrahman-mohammad/highlightjs-verse/issues/10

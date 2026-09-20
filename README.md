@@ -99,6 +99,7 @@ Now ` ```verse ` code fences in markdown are syntax highlighted.
 | Token | Examples | Color |
 |---|---|---|
 | Block comments | `<# nested #>` | Green `#77B06B` |
+| Indented comments | `<#> marker` plus the indented lines below it | Green `#77B06B` |
 | Line comments | `# comment` | Green `#77B06B` |
 | Strings | `"Hello {Name}"` | Tan `#C09077` |
 | String interpolation | `{expr}` inside strings | Gold `#B89047` |
