@@ -106,8 +106,9 @@ Now ` ```verse ` code fences in markdown are syntax highlighted.
 | Escape sequences | `\n`, `\t`, `\"` | Gold `#B89047` |
 | Numbers | `42`, `0xFF`, `3.14e2` | Light green `#c2ddb4` |
 | Control keywords | `return`, `yield`, `break` | Blue `#569cd6` |
-| Block keywords | `with`, `do`, `then`, `else` | Slate blue `#8499b7` |
+| Block keywords | `if`, `for`, `then`, `else`, `race`, `spawn` | Slate blue `#8499b7` |
 | Declaration keywords | `var`, `set`, `ref`, `in` | Slate blue `#8499b7` |
+| Built-in types | `int`, `float`, `string`, `logic`, `option` | Slate blue `#8499b7` |
 | Type specifiers | `class`, `struct`, `interface` | Blue `#569cd6` |
 | Operators | `+`, `->`, `=>`, `:=` | Teal `#77AFAF` |
 | Logical operators | `and`, `or`, `not` | Teal `#77AFAF` |

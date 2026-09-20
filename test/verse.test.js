@@ -186,6 +186,77 @@ describe('highlightjs-verse', () => {
         });
     });
 
+    // Words the compiler reserves. Epic's grammar scopes none of them; this
+    // package does, for readability, the way it already does for specifiers.
+    describe('reserved words and built-in types', () => {
+        const BLOCK_MACROS = ['if', 'for', 'loop', 'block', 'case', 'defer', 'spawn', 'race', 'sync', 'rush', 'branch', 'let', 'batch', 'first'];
+        const BUILTIN_TYPES = ['int', 'float', 'string', 'void', 'char', 'logic', 'any', 'comparable', 'tuple', 'rational', 'array', 'map', 'option'];
+
+        test.each(BLOCK_MACROS)('block macro %s is built_in', (word) => {
+            expectToken(word, 'built_in', word);
+        });
+
+        test.each(BUILTIN_TYPES)('built-in type %s is type', (word) => {
+            expectToken(word, 'type', word);
+        });
+
+        test('if before a parenthesis is a keyword, not a function name', () => {
+            const html = highlight('if (X > 1):');
+            expect(html).toContain('<span class="hljs-built_in">if</span>');
+            expect(html).not.toContain('function_">if<');
+        });
+
+        test('for before a parenthesis is a keyword; the loop variable is still a definition', () => {
+            const html = highlight('for (Y := 0..3):');
+            expect(html).toContain('<span class="hljs-built_in">for</span>');
+            expect(html).toContain('<span class="hljs-title function_">Y</span>');
+        });
+
+        test('tuple before a parenthesis is a type, not a function name', () => {
+            const html = highlight('T:tuple(int, int) = (1, 2)');
+            expect(html).toContain('<span class="hljs-title function_">T</span>');
+            expect(html).toContain('<span class="hljs-type">tuple</span>(<span class="hljs-type">int</span>');
+            expect(html).not.toContain('function_">tuple<');
+        });
+
+        test('case before a parenthesis is a keyword', () => {
+            const html = highlight('case(X):');
+            expect(html).toContain('<span class="hljs-built_in">case</span>');
+        });
+
+        test('concurrency block', () => {
+            const html = highlight('race:\n    sync:\n        branch:\n            spawn{Go()}');
+            for (const word of ['race', 'sync', 'branch', 'spawn']) {
+                expect(html).toContain(`<span class="hljs-built_in">${word}</span>`);
+            }
+            expect(html).toContain('<span class="hljs-title function_">Go</span>');
+        });
+
+        test('a rejected keyword does not match again from its second character', () => {
+            const html = highlight('if (X)');
+            expect(html).not.toContain('function_">f<');
+            expect(html).toContain('<span class="hljs-built_in">if</span> (X)');
+        });
+
+        test('words the compiler has only reserved for the future stay plain', () => {
+            // ReservedFuture or gated at an unshipped version: still legal identifiers.
+            for (const word of ['profile', 'await', 'upon', 'dictate']) {
+                expect(highlight(word)).toBe(word);
+            }
+        });
+
+        test('function calls are unchanged', () => {
+            expect(highlight('Print("x")')).toContain('<span class="hljs-title function_">Print</span>');
+            expect(highlight('MyFunc<public>()')).toContain('<span class="hljs-title function_">MyFunc</span>');
+        });
+
+        test('definitions are unchanged and their types are scoped', () => {
+            const html = highlight('Score : int = 0');
+            expect(html).toContain('<span class="hljs-title function_">Score</span>');
+            expect(html).toContain('<span class="hljs-type">int</span>');
+        });
+    });
+
     describe('type specifiers', () => {
         test('class keyword', () => {
             expectToken('class', 'keyword', 'class');
@@ -247,6 +318,27 @@ describe('highlightjs-verse', () => {
             expect(html).toContain('<span class="hljs-keyword">class</span>');
             expect(html).toContain('<span class="hljs-keyword">unique</span>');
             expect(html).toContain('<span class="hljs-keyword">allocates</span>');
+        });
+
+        test.each(['constructor', 'predicts', 'open', 'final_super_base', 'persistent', 'module_scoped_var_weak_map_key', 'uht_comparable'])(
+            'specifier %s shipped in Epic digests',
+            (word) => {
+                expectToken(word, 'keyword', word);
+            }
+        );
+
+        test('final_super_base does not collide with final_super or final', () => {
+            const html = highlight('final_super_base');
+            expect(html).toContain('<span class="hljs-keyword">final_super_base</span>');
+            expect(html).not.toContain('<span class="hljs-keyword">final_super</span>_base');
+            expect(html).not.toContain('<span class="hljs-keyword">final</span>_super_base');
+        });
+
+        test('digest class header highlights every specifier', () => {
+            const html = highlight('component<native><public> := class<abstract><unique><castable><final_super_base>:');
+            for (const word of ['native', 'public', 'class', 'abstract', 'unique', 'castable', 'final_super_base']) {
+                expect(html).toContain(`<span class="hljs-keyword">${word}</span>`);
+            }
         });
     });
 

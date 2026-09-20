@@ -26,12 +26,30 @@ function hljsDefineVerse(hljs) {
     //   built_in -> keyword.declaration.verse (#8499b7 slate blue)
     //   type     -> keyword.declaration.verse (#8499b7 slate blue)
     //   literal  -> constant.language (#569cd6 blue)
+    //
+    // Epic's grammar scopes only the first word of each line below. The rest
+    // are words the compiler reserves (ReservedSymbols.inl), added here for
+    // readability the way the specifiers are. Only words reserved at a
+    // shipped version belong: profile, await, upon and dictate are still
+    // legal identifiers and must stay out.
+    var BLOCK_MACROS = 'if for loop block case defer spawn race sync rush branch let batch first';
+    var BUILTIN_TYPES = 'int float string void char logic any comparable tuple rational array map option';
     var KEYWORDS = {
         keyword: 'return yield break continue',
-        built_in: 'with do until catch then else of at over when where while next',
-        type: 'var set ref alias live in is',
+        built_in: 'with do until catch then else of at over when where while next ' + BLOCK_MACROS,
+        type: 'var set ref alias live in is ' + BUILTIN_TYPES,
         literal: 'true false'
     };
+
+    // Keeps the identifier rules below off every keyword. Rules with a match
+    // are scanned before keywords are applied, so without this `if (X)` is a
+    // function name. The leading \b is load-bearing: when the lookahead
+    // rejects `if` at its first letter, the engine retries one character on
+    // and `f (` would match.
+    var NOT_KEYWORD = '\\b(?!(?:' +
+        [KEYWORDS.keyword, KEYWORDS.built_in, KEYWORDS.type, KEYWORDS.literal].join(' ').split(' ').join('|') +
+        ')\\b)';
+    var IDENT = "[A-Za-z_]\\w*(?:'[^']*')?";
 
     // --- Block comment: <# ... #> (nestable) -----------------------------
     // Both guards keep <#> out, as in Epic's grammar. It is a different
@@ -160,7 +178,7 @@ function hljsDefineVerse(hljs) {
     // Matches identifiers before ( or <word (not <# which starts a comment)
     var FUNCTION_CALL = {
         scope: 'title.function',
-        match: /[A-Za-z_]\w*(?:'[^']*')?(?=\s*(?:\(|<(?!#)\w))/,
+        match: NOT_KEYWORD + IDENT + '(?=\\s*(?:\\(|<(?!#)\\w))',
         relevance: 0
     };
 
@@ -169,24 +187,28 @@ function hljsDefineVerse(hljs) {
     // Official scope: entity.name.function.verse (#e5c2ff purple)
     var DEFINITION = {
         scope: 'title.function',
-        match: /[A-Za-z_]\w*(?:'[^']*')?(?=\s*(?::\s*[A-Za-z_({/\[]|:=))/,
+        match: NOT_KEYWORD + IDENT + '(?=\\s*(?::\\s*[A-Za-z_({/\\[]|:=))',
         relevance: 0
     };
 
     // --- Class/struct/interface/enum specifiers ---------------------------
     // Not separate keywords in the official grammar (just identifiers),
     // but highlighting these as keywords improves readability.
+    // Longer words go before their prefixes in the alternation.
     // Grouped by kind:
     //   Declaration kinds: class struct interface enum module trait
-    //   Class modifiers:   unique abstract concrete final final_super castable persistable
+    //   Class modifiers:   unique abstract concrete final final_super final_super_base
+    //                      castable persistable persistent uht_comparable
+    //                      module_scoped_var_weak_map_key
+    //   Enum modifiers:    open
     //   Access modifiers:  internal public private protected scoped epic_internal
     //   Inheritance:       override
     //   Effect specifiers: transacts varies computes converges decides no_rollback
-    //                      suspends reads writes allocates
-    //   Function attrs:    localizes
+    //                      suspends reads writes allocates predicts
+    //   Function attrs:    localizes constructor
     //   Interop:           native native_callable
     var TYPE_SPECIFIER = {
-        match: /\b(class|struct|interface|enum|module|trait|unique|abstract|concrete|final_super|final|castable|persistable|internal|public|private|protected|scoped|epic_internal|override|transacts|varies|computes|converges|decides|no_rollback|suspends|reads|writes|allocates|localizes|native_callable|native)\b/,
+        match: /\b(class|struct|interface|enum|module|trait|unique|abstract|concrete|final_super_base|final_super|final|castable|persistable|persistent|uht_comparable|module_scoped_var_weak_map_key|open|internal|public|private|protected|scoped|epic_internal|override|transacts|varies|computes|converges|decides|no_rollback|suspends|reads|writes|allocates|predicts|localizes|constructor|native_callable|native)\b/,
         scope: 'keyword',
         relevance: 5
     };
